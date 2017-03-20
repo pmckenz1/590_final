@@ -125,17 +125,83 @@ $(document).ready(function () {
 
 
 <ul>
-<li>Who will participate?</li>
-<li>Will the project will be a data analysis project or a package?</li>
+<li>Who will participate?
+<ul>
+<li><em>Patrick McKenzie</em></li>
+</ul></li>
+<li>Will the project will be a data analysis project or a package?
+<ul>
+<li><em>Package, possibly with accompanying example analysis.</em></li>
+</ul></li>
 <li>Which git workflow from the Chacon text you will use?</li>
 <li>What will the project be about?
 <ul>
-<li>What is the background for the need for the project? i.e., what problem does it solve, and why does that problem need to be solved?</li>
-<li>What is the source of the data? Will real-world data or made-up data be used?</li>
-<li>What specifications will the final project meet? I.e., what will you produce (a single plot of this vs that, a set of tools that does these three things, etc)</li>
-<li>For group projects, what are the roles of the group members?</li>
+<li>What is the background for the need for the project? i.e., what problem does it solve, and why does that problem need to be solved?
+<ul>
+<li><em>Allows chess games to be collected in PGN format and then be converted to a format that allows chess games to be analyzed as a series of Markovian processes.</em></li>
+</ul></li>
+<li>What is the source of the data? Will real-world data or made-up data be used?
+<ul>
+<li><em>An online database of chess games: chessgames.com</em></li>
+</ul></li>
+<li>What specifications will the final project meet? I.e., what will you produce (a single plot of this vs that, a set of tools that does these three things, etc)
+<ul>
+<li><em>A set of tools that will allow users to download chess games and convert them to a format that allows analysis in R.</em></li>
+</ul></li>
+<li>For group projects, what are the roles of the group members?
+<ul>
+<li><em>N/A.</em></li>
+</ul></li>
 </ul></li>
 </ul>
+<div id="the-project" class="section level2">
+<h2>The project</h2>
+<ul>
+<li>The novelty of the project is the concept of the <strong>board snapshot</strong>. Where common chess game notation forces a user to step through all previous moves to understand the context of any specific move, representing games as collections of <strong>board snapshots</strong> provides full context for each move without regard for previous moves.
+<ul>
+<li>This package allows chess games to be considered as series of <strong>Markovian processes</strong>: all information used to make any move is contained in the board loyout at that moment. During the game, the decision about where to move is made based on the current board layout and is not influenced by past moves.</li>
+</ul></li>
+<li>Chess notation:
+<ul>
+<li><strong>Portable Game Notation</strong>: The dominant chess notation style.
+<ul>
+<li>PGN format isn’t friendly for large-scale analysis. Because it describes chess games step-by-step, any specific move can only be understood after playing out all of the previous moves (which produce the board layout for the specific move in question).</li>
+<li>For example, imagine finding “20. Rb3” in PGN notation. This is meaningless without knowing the previous moves. Where is the rook moving from? What does the board look like before and after the move?</li>
+</ul></li>
+<li><strong>Board snapshots</strong>:
+<ul>
+<li>To make the data usable in R, this package contains functions for cleaning up the PGN .txt files from chessgames.com and for representing each game as a series of <strong>board snapshots</strong>. <em>Any specific move in a game can now be understood as a combination of two </em>board snapshots*: One that shows the layout of the board just before the move, and one that shows the layout of the board just after the move.**
+<ul>
+<li>A game with 16 full moves (that is, 16 by white and 16 by black) can be represented by 32 pairs of board snapshots. Any snapshot pair can be individually considered, allowing the game to be analyzed as a series of Markovian processes.</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+<div id="proposed-workflow" class="section level2">
+<h2>Proposed workflow</h2>
+<ul>
+<li>Getting data:
+<ul>
+<li>The data acquisition functions in this package scrape games from “chessgames.com,” a chess game database that is designed to allow users to study individual games based on specific players, tournaments, opening styles, etc.
+<ul>
+<li><code>download_random_games()</code> downloads a user-specified number of random chess games straight from “chessgames.com” – where they are saved as .txt files in PGN format – to a user-specified <strong>empty</strong> directory.</li>
+<li><code>download_games_id()</code> exists to download specific games from chessgames.com. The user supplies a vector of game IDs and a destination.</li>
+</ul></li>
+</ul></li>
+<li>Cleaning data:
+<ul>
+<li><code>get_moves()</code></li>
+</ul></li>
+<li>Producing games as collections of board snapshots:
+<ul>
+<li><code>get_boards()</code>
+<ul>
+<li><code>white_move()</code> and <code>black_move()</code></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
 
 
 

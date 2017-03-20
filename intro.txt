@@ -1,7 +1,0 @@
-GEOL590 final project:
-
-This project is designed to pull chess games from the internet and make them usable for analysis in R.
-
-The most common notation for chess games is “Portable Game Notation” (PGN) and describes how the game progresses move-by-move. A downside of this is that to analyze the board at any moment in the chess game, all moves must be performed in order up to the position in question.
-
-My R package “plays” through the PGN format, saving each position throughout the game as a board snapshot in the form of a data frame (e.g. a game with 50 moves will have 100 board layouts saved). By handling games as collections of board layouts, analysis can occur more easily for individual moves throughout a game.

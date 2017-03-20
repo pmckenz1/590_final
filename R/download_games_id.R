@@ -1,4 +1,4 @@
-get_chess_games <- function(idvector,destination) {
+download_games_id <- function(idvector,destination) {
   readUrl <- function(url) {
     out <- tryCatch(
       {
@@ -29,6 +29,7 @@ get_chess_games <- function(idvector,destination) {
     else if (urltext == 1) {
       connectionfailures <- c(connectionfailures,idvector[i])
     }
+    print(paste0("Done with ID: ",idvector[i]))
   }
-  return(connectionfailures)
+  return(paste0("Finished downloading chess games from ",length(idvector), " game ids."))
 }

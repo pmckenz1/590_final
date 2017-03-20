@@ -1,0 +1,23 @@
+---
+title: "Proposal"
+author: "Patrick McKenzie"
+date: "March 19, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+*  Who will participate?
+*  Will the project will be a data analysis project or a package?
+*  Which git workflow from the Chacon text you will use?
+*  What will the project be about?
+    *  What is the background for the need for the project? i.e., what problem does it solve, and why does that problem need to be solved?
+    *  What is the source of the data? Will real-world data or made-up data be used?
+    *  What specifications will the final project meet? I.e., what will you produce (a single plot of this vs that, a set of tools that does these three things, etc)
+    *  For group projects, what are the roles of the group members?
+
+
+
+

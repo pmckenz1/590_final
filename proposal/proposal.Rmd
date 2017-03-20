@@ -9,49 +9,71 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## The Basics
+
 *  Who will participate?
-    * *Patrick McKenzie*
+    *  *Patrick McKenzie*
 *  Will the project will be a data analysis project or a package?
-    * *Package, possibly with accompanying example analysis.*
+    *  *Package, possibly with accompanying example analysis.*
 *  Which git workflow from the Chacon text you will use?
+    *  *Centralized Workflow.*
 *  What will the project be about?
     *  What is the background for the need for the project? i.e., what problem does it solve, and why does that problem need to be solved?
         *  *Allows chess games to be easily collected in PGN format and then be converted to a format that allows chess games to be analyzed as a series of Markovian processes.*
     *  What is the source of the data? Will real-world data or made-up data be used?
-        *  *An online database of chess games: chessgames.com*
+        *  *An online database of chess games: chessgames.com.*
     *  What specifications will the final project meet? I.e., what will you produce (a single plot of this vs that, a set of tools that does these three things, etc)
-        *  *A set of tools that will allow users to download chess games and convert them to a format that allows analysis in R.*
+        *  *A set of tools that lets users download chess games and convert them to a format that allows analysis in R.*
     *  For group projects, what are the roles of the group members?
         *  *N/A.*
 
-## The project
+## The Project
 
-*  The novelty of the project is the concept of the **board snapshot**. Where common chess game notation forces a user to step through all previous moves to understand the context of any specific move, representing games as collections of **board snapshots** provides full context for each move without regard for previous moves.
-    *  This package allows chess games to be considered as series of **Markovian processes**: all information used to make any move is contained in the board loyout at that moment. During the game, the decision about where to move is made based on the current board layout and is not influenced by past moves.
-    *  FEN notation already exists to represent instantaneous board layouts, but it is difficult to use for analysis. **Board snapshots** take advantage of R's power for representing data in data frames.
+*  The novelty of the project is the concept of **board snapshots** for chess game notation. Where common chess game notation forces a user to step through all previous moves to understand the context of any specific move, representing games as collections of **board snapshots** provides full context for each move without regard for previous moves.
+    *  This package allows chess games to be considered as series of **Markovian processes**: all information used to make any move is contained in the board layout at that moment. During the game, the decision about where to move is made based on the current board layout and is not influenced by past moves.
+    *  FEN notation is sometimes used to represent instantaneous board layouts, but it is difficult to use for analysis. In contrast, **board snapshots** take advantage of R's flexibility for working with data frames.
 *  Chess notation:
     *  **Portable Game Notation (PGN)**: The dominant chess notation style.
         *  PGN format isn't friendly for large-scale analysis. Because it describes chess games step-by-step, any specific move can only be understood after playing out all of the previous moves (which produce the board layout for the specific move in question).
         *  For example, imagine finding "20. Rb3" in PGN notation. This is meaningless without knowing the previous moves. Where is the rook moving from? What does the board look like before and after the move?
+        *  Read about it on Wikipedia [here](https://en.wikipedia.org/wiki/Portable_Game_Notation).
     *  **Forsyth–Edwards notation (FEN)**:
         *  Text notation used to describe the layout of a chess board at any moment during a chess game, without regard for previous moves. For example, it's often used by chess players leaving a game to be resumed later.
+        *  Read about it on Wikipedia [here](https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation).
     *  **Board snapshots**: Can be thought of as an expanded, R-friendly version of Forsyth–Edwards notation.
-        *  To make the data usable in R, this package contains functions for cleaning up the PGN .txt files from chessgames.com and for representing each game as a series of **board snapshots**. *Any specific move in a game can now be understood as a combination of two *board snapshots*: One that shows the layout of the board just before the move, and one that shows the layout of the board just after the move.**
-            *  A game with 16 full moves (that is, 16 by white and 16 by black) can be represented by 32 pairs of board snapshots. Any snapshot pair can be individually considered, allowing the game to be analyzed as a series of Markovian processes.
+        *  Each snapshot is an 8x8 data frame with rows and columns analogous to those on a chess board. Each piece has a unique identifying label, and cells without pieces are labeled "none."
+        *  *Any specific move in a game can be understood as a combination of two board snapshots: One that shows the layout of the board just before the move, and one that shows the layout of the board just after the move.*
+            *  A game with 16 full moves (that is, 16 by white and 16 by black) can be represented by 32 pairs of board snapshots.
     
+This package contains functions for cleaning up the PGN .txt files from chessgames.com and for representing each game as a series of **board snapshots** for data analysis in R.
 
-##  Proposed workflow
+##  Proposed Workflow
 
 *  Getting data:
     *  The data acquisition functions in this package scrape games from "chessgames.com," a chess game database that is designed to allow users to study individual games based on specific players, tournaments, opening styles, etc.
-        *  `download_random_games()` downloads a user-specified number of random chess games straight from "chessgames.com" -- where they are saved as .txt files in PGN format -- to a user-specified **empty** directory.
-        *  `download_games_id()` exists to download specific games from chessgames.com. The user supplies a vector of game IDs and a destination.
+        *  `download_random_games()` 
+            *  Downloads a user-specified number of random chess games straight from "chessgames.com" -- where they are saved as .txt files in PGN format -- to a user-specified **empty** directory.
+        *  `download_games_id()` 
+            *  Exists to download specific games from chessgames.com. The user supplies a vector of game IDs and a destination directory.
 
 *  Cleaning data:
     *  `get_moves()`
+        *  Trims the PGN text file and stores vectors of black and white moves. 
+        *  Returned vectors of moves are in a format usable for `get_boards()`.
 
 *  Producing games as collections of board snapshots:
     *  `get_boards()`
-        *  `white_move()` and `black_move()`
-
+        * Takes cleaned PGN move vectors from `get_moves()` and produces a list of
+            1) all board snapshots
+            2) white move snapshot pairs
+            3) black move snapshot pairs
+        * `white_move()` and `black_move()`
+            *  Internal functions for `get_boards`
+            *  Contain rules for how to interpret each move in PGN notation
+*  Saving games as board snapshots
+    *  `save_boards()`
+        *  Doesn't yet exist, but it will save entire games (or sets of board snapshots) in a way that will be easily recovered in snapshot format by `load_boards()`. Probably as a text file, perhaps with unique extension.
+*  Opening games as board snapshots
+    *  `load_boards()`
+        *  Doesn't yet exist, but will open board snapshots in format from `save_boards()`
 

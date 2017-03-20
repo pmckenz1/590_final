@@ -85,7 +85,6 @@ if (nchar(move) == 3) {
       startingboard[substr(move,3,3),substr(move,2,2)] <- movingpiece
     }
     else {
-      browser()
       indices <- integer(0)
       for (i in 1:length(possible.coords)) {
         if (startingboard[possible.coords[[i]][1],possible.coords[[i]][2]] %in% c("R1_w","R2_w")) {
@@ -96,6 +95,14 @@ if (nchar(move) == 3) {
       moving.to.coords <- c(rownumber,colnumber)
       if (two.coords[[1]][1] == two.coords[[2]][1]) {
         if (abs(moving.to.coords[2]-two.coords[[1]][2]) > abs(moving.to.coords[2]-two.coords[[2]][2])) {
+          movingpiece <- startingboard[two.coords[[2]][1],two.coords[[2]][2]]
+        }
+        else {
+          movingpiece <- startingboard[two.coords[[1]][1],two.coords[[1]][2]]
+        }
+      }
+      if (two.coords[[1]][2] == two.coords[[2]][2]) {
+        if (abs(moving.to.coords[1]-two.coords[[1]][1]) > abs(moving.to.coords[1]-two.coords[[2]][1])) {
           movingpiece <- startingboard[two.coords[[2]][1],two.coords[[2]][2]]
         }
         else {
@@ -215,28 +222,52 @@ if (nchar(move) == 3) {
     startingboard["1","g"] <- movingpiece1
   }
 }
-if (nchar(move) == 4) {
-  #Capture
-  if (substr(move,2,2) == "x") {
-    if (startingboard[(substr(move,4,4)),substr(move,3,3)] != "none") {
-    movingpiece <- startingboard[(as.numeric(substr(move,4,4))-1),substr(move,1,1)]  #+1 if black (not -1)
-    startingboard[grep(movingpiece,startingboard)] <- "none"
-    startingboard[substr(move,4,4),substr(move,3,3)] <- movingpiece
-    }
-    #en passant
-    else if ((startingboard[(as.numeric(substr(move,4,4))),substr(move,3,3)] == "none") && as.numeric(substr(move,4,4)) == 6) {
-      movingpiece <- startingboard[(as.numeric(substr(move,4,4))-1),substr(move,1,1)]
+  if (nchar(move) == 4) {
+    #Capture
+    if (substr(move,2,2) == "x") {
+      if (startingboard[(substr(move,4,4)),substr(move,3,3)] != "none") {
+      movingpiece <- startingboard[(as.numeric(substr(move,4,4))-1),substr(move,1,1)]  #+1 if black (not -1)
       startingboard[grep(movingpiece,startingboard)] <- "none"
-      startingboard[(as.numeric(substr(move,4,4))-1),substr(move,3,3)] <- "none"
+      startingboard[substr(move,4,4),substr(move,3,3)] <- movingpiece
+      }
+      #en passant
+      else if ((startingboard[(as.numeric(substr(move,4,4))),substr(move,3,3)] == "none") && as.numeric(substr(move,4,4)) == 6) {
+        movingpiece <- startingboard[(as.numeric(substr(move,4,4))-1),substr(move,1,1)]
+        startingboard[grep(movingpiece,startingboard)] <- "none"
+        startingboard[(as.numeric(substr(move,4,4))-1),substr(move,3,3)] <- "none"
+        startingboard[substr(move,4,4),substr(move,3,3)] <- movingpiece
+      }
+    }
+    else if (substr(move,2,2) %in% letters[1:8]) {
+      column <- as.vector(startingboard[,substr(move,2,2)])
+      movingpiece <- column[grepl(substr(move,1,1),column)+grepl("w",column) == 2]
+      startingboard[grep(movingpiece,startingboard)] <- "none"
+      startingboard[substr(move,4,4),substr(move,3,3)] <- movingpiece
+    }
+    else if (substr(move,2,2) %in% 1:8) {
+      row <- as.vector(startingboard[substr(move,2,2),])
+      movingpiece <- row[grepl(substr(move,1,1),row)+grepl("w",row) == 2]
+      startingboard[grep(movingpiece,startingboard)] <- "none"
       startingboard[substr(move,4,4),substr(move,3,3)] <- movingpiece
     }
   }
-  else if (substr(move,2,2) %in% letters[1:8]) {
-    column <- as.vector(startingboard[,substr(move,2,2)])
-    movingpiece <- column[grepl(substr(move,1,1),column)+grepl("w",column) == 2]
-    startingboard[grep(movingpiece,startingboard)] <- "none"
-    startingboard[substr(move,4,4),substr(move,3,3)] <- movingpiece
+  if (nchar(move) == 5) {
+    if (substr(move,3,3) == "x") { 
+      if (substr(move,2,2) %in% letters[1:8]) { #the moving piece is in a particular column
+        column <- as.vector(startingboard[,substr(move,2,2)])
+        movingpiece <- column[grepl(substr(move,1,1),column)+grepl("w",column) == 2]
+        startingboard[grep(movingpiece,startingboard)] <- "none"
+        startingboard[substr(move,5,5),substr(move,4,4)] <- movingpiece
+      }
+    }
+    if (move == "O-O-O") { #Queenside Castle
+      movingpiece1 <- "K_w"
+      movingpiece2 <- "R1_w"
+      startingboard[grep(movingpiece1,startingboard)] <- "none"
+      startingboard[grep(movingpiece2,startingboard)] <- "none"
+      startingboard["1","d"] <- movingpiece2
+      startingboard["1","c"] <- movingpiece1
+    }
   }
-}
   startingboard
 }

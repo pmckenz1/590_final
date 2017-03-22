@@ -143,7 +143,7 @@ $(document).ready(function () {
 <ul>
 <li>What is the background for the need for the project? i.e., what problem does it solve, and why does that problem need to be solved?
 <ul>
-<li><em>Allows chess games to be easily collected in PGN format and then be converted to a format that allows chess games to be analyzed as a series of Markovian processes.</em></li>
+<li><em>Allows chess games to be easily collected in PGN format and then be converted to a format that allows chess games to be analyzed as a series of independendent decisions based on instantaneous board layouts.</em></li>
 </ul></li>
 <li>What is the source of the data? Will real-world data or made-up data be used?
 <ul>
@@ -165,7 +165,7 @@ $(document).ready(function () {
 <ul>
 <li>The novelty of the project is the concept of <strong>board snapshots</strong> for chess game notation. Where common chess game notation forces a user to step through all previous moves to understand the context of any specific move, representing games as collections of <strong>board snapshots</strong> provides full context for each move without regard for previous moves.
 <ul>
-<li>This package allows chess games to be considered as series of <strong>Markovian processes</strong>: all information used to make any move is contained in the board layout at that moment. During the game, the decision about where to move is made based on the current board layout and is not influenced by past moves.</li>
+<li>This package allows chess games to be considered as series of independent layouts satisfying the Markov property: all information used to make any move is contained in the board layout at that moment. During the game, the decision about where to move is made based on the current board layout and is not influenced by past moves.</li>
 <li>FEN notation is sometimes used to represent instantaneous board layouts, but it is difficult to use for analysis. In contrast, <strong>board snapshots</strong> take advantage of R’s flexibility for working with data frames.</li>
 </ul></li>
 <li>Chess notation:
@@ -193,12 +193,24 @@ $(document).ready(function () {
 </ul>
 <p>This package contains functions for cleaning up the PGN .txt files from chessgames.com and for representing each game as a series of <strong>board snapshots</strong> for data analysis in R.</p>
 </div>
+<div id="doesnt-a-package-like-this-already-exist" class="section level2">
+<h2>Doesn’t a package like this already exist?</h2>
+<ul>
+<li>Sort of, yeah. And I didn’t realize that until I was already pretty far in. <code>rchess</code> (information <a href="http://jkunst.com/rchess/">here</a>) is a package that wraps a javascript package called <code>chessjs</code>.
+<ul>
+<li><code>rchess</code> is designed for “chess move, generation/validation, piece placement/movement, and check/checkmate/stalemate detection.”</li>
+<li><code>rchess</code> plots beautiful chess boards, allowing users to check currently available moves, make their own moves, and, importantly, read in PGN data and FEN data.</li>
+<li>I think <code>rchess</code> and my package could work well in tandem – while <code>rchess</code> is useful for analyzing the status of a game with regard to rules (for example, one can check available moves for any given board layout, and one can check status of check/checkmate/stalemate for any given board layout), <code>rchess</code> cannot access internal moves from PGN data. In contrast, my package can read in PGN files and break games down into individual board layouts. These board layouts could then, hypothetically, be individually checked out by <code>rchess</code> functions during data analysis.</li>
+</ul></li>
+<li>Chess packages also exist in most other programming languages – Python, JS, Java, and C, for example.</li>
+</ul>
+</div>
 <div id="proposed-workflow" class="section level2">
 <h2>Proposed Workflow</h2>
 <ul>
 <li>Getting data:
 <ul>
-<li>The data acquisition functions in this package scrape games from “chessgames.com,” a chess game database that is designed to allow users to study individual games based on specific players, tournaments, opening styles, etc.
+<li>The data acquisition functions in this package scrape games from “chessgames.com,” a chess game database that is designed to allow users to study individual games based on specific players, tournaments, opening styles, etc. (read more on chessgames.com at their <a href="http://www.chessgames.com/chessabout.html">“about” page</a>)
 <ul>
 <li><code>download_random_games()</code>
 <ul>
@@ -234,19 +246,26 @@ $(document).ready(function () {
 <li>Contain rules for how to interpret each move in PGN notation</li>
 </ul></li>
 </ul></li>
+<li><code>boards_as_fen()</code>
+<ul>
+<li>Doesn’t yet exist</li>
+<li>Will save my custom data frame format for chess board layouts in FEN notation to be used elsewhere (like by <code>rchess</code>, for example)</li>
+</ul></li>
 </ul></li>
 <li>Saving games as board snapshots
 <ul>
 <li><code>save_boards()</code>
 <ul>
-<li>Doesn’t yet exist, but it will save entire games (or sets of board snapshots) in a way that will be easily recovered in snapshot format by <code>load_boards()</code>. Probably as a text file, perhaps with unique extension.</li>
+<li>Doesn’t yet exist</li>
+<li>Will save entire games (or sets of board snapshots) in a way that will be easily recovered in snapshot format by <code>load_boards()</code>. Probably as a text file, perhaps with unique extension.</li>
 </ul></li>
 </ul></li>
 <li>Opening games as board snapshots
 <ul>
 <li><code>load_boards()</code>
 <ul>
-<li>Doesn’t yet exist, but will open board snapshots in format from <code>save_boards()</code></li>
+<li>Doesn’t yet exist</li>
+<li>Will open board snapshots in format from <code>save_boards()</code></li>
 </ul></li>
 </ul></li>
 </ul>
